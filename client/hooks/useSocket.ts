@@ -3,8 +3,8 @@ import { fetchUserToken } from "@/utils/fetchToken";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-const WS_URL = "ws://localhost:8081";
-
+//const WS_URL = "ws://localhost:8081";
+const WS_URL = "https://chessjs.onrender.com";
 export const useSocket = () => {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [error, setError] = useState<string | null>(null);

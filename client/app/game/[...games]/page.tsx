@@ -2,8 +2,9 @@
 import ChessBoard, { isPromoting } from '@/components/ChessBoard'
 import ExitGameModel from '@/components/ExitGame'
 import MovesTable from '@/components/Movetable'
-import { ShareGame } from '@/components/ShareGame'
-import { UserAvatar } from '@/components/UseAvatar'
+import ShareGame from '@/components/ShareGame'
+import UserAvatar from '@/components/UseAvatar'
+
 import GameEndModal from '@/components/gameEndModal'
 import { Button } from '@/components/ui/button'
 import { useGameContext } from '@/hooks/moveContex'

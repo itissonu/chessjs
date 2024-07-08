@@ -1,6 +1,6 @@
-export const UserAvatar = ({ name }: { name: string }) => {
-
-    return <div className="text-white">
-        
-        {name}</div>;
+const UserAvatar = ({ name }: { name: string }) => {
+    return <div className="text-white">{name}</div>;
   };
+  
+  export default UserAvatar;
+  
