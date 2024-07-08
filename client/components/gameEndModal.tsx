@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import wk from '../public/wk.png'
 import bk from '../public/bk.png'
-import { GameResult, Result } from '@/app/game/[...games]/page';
+import { GameResult, } from '@/app/game/[...games]/page';
 import Image from 'next/image';
-
+enum Result {
+    WHITE_WINS = 'WHITE_WINS',
+    BLACK_WINS = 'BLACK_WINS',
+    DRAW = 'DRAW',
+  }
 
 interface ModalProps {
     blackPlayer?: { id: string; name: string };

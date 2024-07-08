@@ -16,7 +16,7 @@ import { Chess, Move, SQUARES } from 'chess.js'
 import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-export enum Result {
+ enum Result {
   WHITE_WINS = 'WHITE_WINS',
   BLACK_WINS = 'BLACK_WINS',
   DRAW = 'DRAW',
