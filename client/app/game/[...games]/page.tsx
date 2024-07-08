@@ -25,7 +25,7 @@ interface Metadata {
   blackPlayer: { id: string; name: string };
   whitePlayer: { id: string; name: string };
 }
-export interface GameResult {
+  interface GameResult {
   result: Result;
   by: string;
 }
