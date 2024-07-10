@@ -283,6 +283,7 @@ class Game {
   }
   async exitGame(user) {
     this.endGame('PLAYER_EXIT', user.userId === this.player2UserId ? 'WHITE_WINS' : 'BLACK_WINS');
+   
   }
   //this like for after 3 min if no move occured than suspend the game
   async resetAbandonTimer() {
@@ -352,7 +353,9 @@ class Game {
     )
     this.clearTimer();
     this.clearMoveTimer();
-    
+    this.gameId=null;
+    this.player1UserId=null;
+    this.player2UserId=null;
 
   }
 

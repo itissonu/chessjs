@@ -16,8 +16,6 @@ import { Chess, Move, SQUARES } from 'chess.js'
 import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import loading from '../../../public/prev.jpg'
-import Image from 'next/image'
 import LoadingComponent from '@/components/LoadingComponent'
 enum Result {
   WHITE_WINS = 'WHITE_WINS',
@@ -60,11 +58,7 @@ const Page = () => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   if (status!=='authenticated') {
-  //     router.push('/')
-  //   }
-  // }, [session?.user]);
+
 
   useEffect(() => {
 
@@ -84,7 +78,7 @@ const Page = () => {
       fetchData();
     }
   }, [status]);
-
+  const moveAudio = new Audio('/move.wav');
   useEffect(() => {
     if (!socket) {
       return
@@ -165,6 +159,7 @@ const Page = () => {
             setMoves((moves) => [...moves, move]);
 
             setBoard(chess.board())
+            moveAudio.play();
 
           } catch (error) {
             console.log(error)
@@ -188,14 +183,13 @@ const Page = () => {
             by: wonBy,
           });
           setGameID(null)
-          
-          chess.reset()
-          setMoves([])
           // setChess(new Chess());
           // setBoard(chess.board())
+          chess.reset()
+          setMoves([])
           addStartStatus(false);
           setAdded(false);
-         
+
 
           break;
         case GAME_OVER:
@@ -235,7 +229,7 @@ const Page = () => {
   //     }, 100);
   //     return () => clearInterval(interval);
   //   }
-  // }, [player1TimeConsumed,player2TimeConsumed]);
+  // }, [chess.turn()]);
 
 
 
@@ -352,7 +346,7 @@ const Page = () => {
           <div className="rounded-md pt-2 bg-bgAuxiliary3 flex-1 overflow-auto h-[95vh] overflow-y-scroll ">
             {!startStatus ? (
               <div className="pt-8 flex justify-center w-full">
-                {added || gameId ? (
+                { gameId ? (
                   <div className='flex flex-col items-center space-y-4 justify-center'>
                     <h5 className="mb-2 text-xl font-extrabold tracking-tight text-black opacity-40">
                       Wait opponent will join soon...

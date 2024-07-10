@@ -22,20 +22,38 @@ class GameManager {
         console.log(this.users.length + "-after adding user");
     }
 
-    removeUser(user) {
-        this.users = this.users.filter(userPresent => userPresent !== user);
+    removeUser(socketToRemove) {
+        console.log(this.games)
+        let userToRemove = this.users.find(user => user.socket === socketToRemove);
+        if (userToRemove) {
+            let gameToUpdate = this.games.find(game =>
+                game.player1UserId === userToRemove.userId || game.player2UserId === userToRemove.userId
+            );
+            if (gameToUpdate) {
+
+                if (gameToUpdate.player1UserId === userToRemove.userId && gameToUpdate.player2UserId === null) {
+                    this.games = this.games.filter((g) => g.gameId !== gameToUpdate.gameId);
+                    console.log(userToRemove.userId + " removed from pending game");
+                    gameToUpdate.player1UserId = null;
+                    this.pendingGamesId = null;
+                }
+            }
+        }
+
+        this.users = this.users.filter(user => user.socket !== socketToRemove);
 
         console.log(this.users.length + "-user after removed ");
     }
+
     removeGame(gameId) {
         this.games = this.games.filter((g) => g.gameId !== gameId);
     }
     handler(user) {
         console.log('Handler attached for user:', user.ws);
         user.socket.on("message", async (data) => {
-          
+
             const message = JSON.parse(data);
-            
+
             console.log(message.type)
 
             if (message.type === FRIEND_GAME) {
@@ -106,6 +124,8 @@ class GameManager {
                                 }
                             })
                         )
+                        return;
+
                     }
                     socketManager.addUser(user, game.gameId)
                     game.updateSecondPlayer(user.userId)
@@ -154,6 +174,7 @@ class GameManager {
                 if (game) {
                     game.exitGame(user);
                     this.removeGame(game.gameId)
+                    this.pendingGamesId = null;
                 }
             }
             if (message.type === JOIN_ROOM) {
