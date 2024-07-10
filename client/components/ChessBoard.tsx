@@ -79,22 +79,28 @@ const ChessBoard = ({ myturn, chess, board, socket, setBoard, gameId,
     }) => {
 
     const [from, setFrom] = useState<Square | null>()
+    console.log(myColor+'my color ......')
+   
 
     const isMyTurn = myColor === chess.turn();
-  
+    const [isFlipped, setIsFlipped] = useState(false);
     const moveAudio = new Audio('/move.wav');
     const captureAudio = new Audio('/game.wav');
     const CheckMateAudion = new Audio('/checkmate.wav')
     const checkonly = new Audio('/check.wav')
     const [gameOver, setGameOver] = useState(false);
-    const { setMoves, moves, setIsFlipped, isFlipped } = useGameContext()
+    const { setMoves, moves } = useGameContext()
     const [check, setCheck] = useState<Boolean | false>(chess.isCheck())
     const [kingSquare, setKingSquare] = useState(null);
+    console.log(isFlipped+"is flipped ...bcz i must be black")
     useEffect(() => {
         if (myColor === 'b') {
+            console.log(myColor+'is my color'+'')
             setIsFlipped(true);
+            console.log(myColor+' my color'+'sp fliped')
         }
     }, [myColor]);
+ 
 
     useEffect(() => {
 
@@ -199,7 +205,7 @@ const ChessBoard = ({ myturn, chess, board, socket, setBoard, gameId,
                 onClick={() => handleClick(squareRepresent as Square, square)}
                 key={j}
 
-                className={`lg:w-24 w-[60px] flex text-center ${isKingInCheck ? 'bg-pink-200' : ''} justify-center items-center  hover:bg-green-200 lg:h-24  h-[50px] ${(i + j) % 2 === 0 ? 'bg-[#739552]' : 'bg-green-100'
+                className={`lg:w-[76px] w-[60px] flex text-center ${isKingInCheck ? 'bg-pink-200' : ''} justify-center items-center  hover:bg-green-200 lg:h-[70px]  h-[45px] ${(i + j) % 2 === 0 ? 'bg-[#739552]' : 'bg-green-100'
                     }`}
             >
                 {square && (

@@ -13,9 +13,10 @@ const ShareGame = ({
 }) => {
   let url;
   if (isFriendGame) {
-    url = window.origin + "/game/friends/" + gameId;
+    url = gameId;
   } else {
-    url = window.origin + "/game/" + gameId;
+   // url = window.origin + "/game/" + gameId;
+    url =  gameId;
   }
 
   const [copied, setCopied] = useState(false);

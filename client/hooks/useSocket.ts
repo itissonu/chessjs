@@ -62,5 +62,5 @@ export const useSocket = () => {
         initiateConnection();
     }, []);
 
-    return socket;
+    return {socket,error};
 };

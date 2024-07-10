@@ -16,7 +16,10 @@ import { Chess, Move, SQUARES } from 'chess.js'
 import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
- enum Result {
+import loading from '../../../public/prev.jpg'
+import Image from 'next/image'
+import LoadingComponent from '@/components/LoadingComponent'
+enum Result {
   WHITE_WINS = 'WHITE_WINS',
   BLACK_WINS = 'BLACK_WINS',
   DRAW = 'DRAW',
@@ -25,13 +28,13 @@ interface Metadata {
   blackPlayer: { id: string; name: string };
   whitePlayer: { id: string; name: string };
 }
-  interface GameResult {
+interface GameResult {
   result: Result;
   by: string;
 }
 const GAME_TIME_MS = 10 * 60 * 1000;
 const Page = () => {
-  const socket = useSocket()
+  const { socket, error } = useSocket()
   const [chess, setChess] = useState(new Chess())
   const [board, setBoard] = useState(chess.board())
   const [turn, setTurn] = useState('w')
@@ -41,7 +44,7 @@ const Page = () => {
   const [player2TimeConsumed, setPlayer2TimeConsumed] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
-  const [gameId, setGameID] = useState("");
+  const [gameId, setGameID] = useState(null);
   const { data: session, status } = useSession();
   const router = useRouter();
   const { moves, setMoves } = useGameContext()
@@ -49,8 +52,7 @@ const Page = () => {
   //const audio = new Audio('/move.wav');
   const [friendGame, setFriendGame] = useState(false)
   const { games } = useParams();
-  console.log(games)
-  console.log(gameId)
+
 
   useEffect(() => {
     if (games[0] === 'friends') {
@@ -69,7 +71,7 @@ const Page = () => {
     const fetchData = async () => {
       try {
         const data = await fetchUserToken();
-        if(!data.user){
+        if (!data.user) {
           router.push('/')
         }
         setUserId(data.user?.id || null);
@@ -97,11 +99,12 @@ const Page = () => {
         case GAME_ADDED:
           setAdded(true);
           setGameID((p) => message.gameId);
+
           break;
 
         case INIT_GAME:
           setChess(new Chess())
-          // setBoard(chess.board())
+          //setBoard(chess.board())
           addStartStatus(true)
           setGameID(() => message.payload.gameId)
 
@@ -184,9 +187,15 @@ const Page = () => {
             result: message.payload.result,
             by: wonBy,
           });
-          chess.reset();
+          setGameID(null)
+          
+          chess.reset()
+          setMoves([])
+          // setChess(new Chess());
+          // setBoard(chess.board())
           addStartStatus(false);
           setAdded(false);
+         
 
           break;
         case GAME_OVER:
@@ -211,7 +220,8 @@ const Page = () => {
 
     }
 
-  }, [socket])
+  }, [socket, chess])
+
 
 
   // useEffect(() => {
@@ -226,6 +236,8 @@ const Page = () => {
   //     return () => clearInterval(interval);
   //   }
   // }, [player1TimeConsumed,player2TimeConsumed]);
+
+
 
   const getTimer = (timeConsumed: number) => {
     const timeLeftMs = GAME_TIME_MS - timeConsumed;
@@ -250,12 +262,18 @@ const Page = () => {
       }),
     );
     setMoves([]);
-    router.push('/');
+    router.push('/')
+
   };
 
-  if (!socket) {
-    return <>Connecting...</>
+
+  if (error) {
+    return <LoadingComponent error={error} />;
   }
+  if (!socket) {
+    return <LoadingComponent />
+  }
+
 
   return (
     <div className='flex justify-center items-center h-auto  bg-[#483f35]  lg:pr-14 w-full '>
@@ -268,10 +286,10 @@ const Page = () => {
       )}
 
       <div className='w-full flex flex-col lg:flex-row h-full justify-between p-2'>
-        <div className='w-full lg:w-[60%] gap-3 flex flex-col justify-center items-center'>
+        <div className='w-full lg:w-[60%] gap-1 flex flex-col justify-center items-center'>
 
           {startStatus && (
-            <div className="mb-4 w-full lg:pl-32 lg:pr-32">
+            <div className="mb-1 w-full lg:pl-32 lg:pr-32">
               <div className="flex w-full justify-between">
                 <UserAvatar
                   name={
@@ -281,7 +299,7 @@ const Page = () => {
                   }
                 />
                 {startStatus && (
-                  <div className="justify-center items-center p-2 lg:text-base text-[10px] shadow-lg border-2  flex bg-white/20  text-white rounded-md">
+                  <div className="justify-center items-center p-2 lg:text-base text-[7px] shadow-lg   flex bg-white/20  text-white rounded-md">
                     {(userId === gameMetadata?.blackPlayer?.id ? 'b' : 'w') ===
                       chess.turn()
                       ? 'Your turn'
@@ -297,7 +315,7 @@ const Page = () => {
               </div>
             </div>
           )}
-          <div className='w-full p-3 lg:w-auto'>
+          <div className='w-full h-[90%] justify-center items-center p-3 lg:w-auto'>
             <ChessBoard
               setChess={setChess}
               myturn={turn}
@@ -342,7 +360,7 @@ const Page = () => {
                     <ShareGame gameId={gameId ?? ''} isFriendGame={friendGame ? true : false} />
                   </div>
                 ) : (
-                  friendGame ? (friendGame && games[0]==='friends' && games.length===2?( <Button
+                  friendGame ? (friendGame && games[0] === 'friends' && games.length === 2 ? (<Button
                     onClick={() => {
                       socket.send(
                         JSON.stringify({
@@ -352,7 +370,7 @@ const Page = () => {
                     }}
                   >
                     Play with your friend
-                  </Button>): <Button
+                  </Button>) : <Button
                     onClick={() => {
                       socket.send(
                         JSON.stringify({

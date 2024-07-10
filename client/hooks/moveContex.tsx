@@ -16,7 +16,7 @@ const GameProvider = ({ children }: Readonly<{
     children: React.ReactNode;
 }>) => {
   const [moves, setMoves] = useState<Move[]>([]);
-  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
  
 
